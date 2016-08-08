@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'ofl-sandbox'
+    version =  '0.1.0-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile(
+	
+    	[group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
+    	[group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.4.0.RELEASE'],
+    	[group: 'org.springframework', name: 'spring-context', version: '4.3.2.RELEASE'],
+    	[group: 'org.springframework.boot', name: 'spring-boot-starter-velocity', version: '1.4.0.RELEASE'],
+    	
+    	[group: 'com.h2database', name: 'h2', version: '1.4.192']
+    )
+    
+    
+    testCompile(
+    	[group: 'org.apache.commons',		name: 'commons-dbcp2',				version: '2.1.1'],
+    	
+    	[group: 'net.sourceforge.csvjdbc',	name: 'csvjdbc',				version:'1.0.28'],
+    	
+ 		[group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.0.RELEASE']
+ 	)
+    
+    
+    
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
