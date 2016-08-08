@@ -11,6 +11,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Component;
 
+import com.mchange.v2.c3p0.DataSources;
+
 @Component("CsvDataSource")
 public class CsvDatabaseSource {
 
@@ -39,13 +41,16 @@ public class CsvDatabaseSource {
 	public DataSource getDataSource(String csvDataDir) throws Exception {
 
         //Create a data source and use it to create a JDBC template.
-        BasicDataSource basicDataSource = new BasicDataSource();
+//        BasicDataSource basicDataSource = new BasicDataSource();
 //		SimpleDriverDataSource basicDataSource = new SimpleDriverDataSource();
+
+//        DataSource ds_unpooled = DataSources.unpooledDataSource(persistenceUrl,
+//                persistenceUsername,
+//                persistencePassword);
         
-        System.err.println("DRIVER CLASSNAME :" + basicDataSource.getDriverClassName());
-        databaseDriver = basicDataSource.getDriverClassName();
-		Resource resource = new ClassPathResource(csvDataDir);
-		
+        
+        Resource resource = new ClassPathResource(csvDataDir);
+		 
 		if(!resource.exists()) {
 			throw new Exception("Cannot find CSV Data Directory");
 		}
@@ -54,8 +59,11 @@ public class CsvDatabaseSource {
 		if(!fileDir.isDirectory()) {
 			throw new Exception("Resource is not a directory");
 		}
+		String jdbcUrl = "jdbc:relique:csv:" + fileDir.getAbsolutePath();
+		
+		DataSource basicDataSource = DataSources.unpooledDataSource(jdbcUrl);
 				
-		basicDataSource.setUrl("jdbc:relique:csv:" + fileDir.getAbsolutePath());
+//		basicDataSource.setUrl(jdbcUrl);
 		
 		return basicDataSource;
 
