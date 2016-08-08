@@ -40,7 +40,10 @@ dependencies {
     	
     	[group: 'net.sourceforge.csvjdbc',	name: 'csvjdbc',				version:'1.0.28'],
     	
- 		[group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.0.RELEASE']
+ 		[group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.0.RELEASE'],
+ 		
+ 		[group: 'org.springframework', name: 'spring-test', version: '4.3.2.RELEASE']
+ 		
  	)
     
     

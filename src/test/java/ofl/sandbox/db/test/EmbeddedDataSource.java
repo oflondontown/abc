@@ -6,11 +6,13 @@ import java.io.IOException;
 
 import javax.sql.DataSource;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+@Profile("H2")
 public class EmbeddedDataSource {
 	
 	protected FilenameFilter fileFilter = new DatabaseFilenameFilter("csv", "sql");
