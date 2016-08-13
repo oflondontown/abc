@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import ofl.sandbox.db.DatabaseManager;
+import ofl.sandbox.db.csv.CsvDatabaseSource;
 
 /***
  * Test class to verify CSV DataSource configuration works
@@ -21,8 +22,6 @@ public class CsvDataSourceQueryTest {
 
 	protected DatabaseManager databaseManager;
 	protected JdbcTemplate template;
-
-	protected static final String CSV_DATA_DIR = "testdb";
 	
 	@Before
 	public void initialise() {
@@ -33,7 +32,8 @@ public class CsvDataSourceQueryTest {
 	public void validateCsvDatabase() {	
 		
 		try {
-			DataSource dataSource = CsvDatabaseSource.getDataSource(CSV_DATA_DIR);
+    		CsvDatabaseSource csvDatabaseSource = new CsvDatabaseSource();
+			DataSource dataSource = csvDatabaseSource.dataSource();
 			Assert.assertNotNull(dataSource);
 			
             ReflectionTestUtils.setField(databaseManager, "jdbcTemplate", new JdbcTemplate(dataSource), JdbcTemplate.class);

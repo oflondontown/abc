@@ -23,6 +23,12 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+configurations {
+    //  use this when using starter-log4j2 dependency :
+    //   all*.exclude module : 'spring-boot-starter-logging'
+    all*.exclude module : 'logback-classic'
+}
+
 dependencies {
     compile(
 	
@@ -31,7 +37,30 @@ dependencies {
     	[group: 'org.springframework', name: 'spring-context', version: '4.3.2.RELEASE'],
     	[group: 'org.springframework.boot', name: 'spring-boot-starter-velocity', version: '1.4.0.RELEASE'],
     	
-    	[group: 'com.h2database', name: 'h2', version: '1.4.192']
+    	
+		[group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.0.RELEASE'],
+    	
+    	
+    	[group: 'com.h2database', name: 'h2', version: '1.4.192'],
+    	
+    	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2
+		//    [group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: '1.4.0.RELEASE']
+    	
+    	
+    	
+		[group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'],
+		[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.6.2'],
+		[group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'],
+		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
+		[group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.6.2'],
+
+
+		[group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.6.2'],
+
+
+		// HIBERNATE-SPRING - LOGGER (log4j)
+		[group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21']
+
     )
     
     
@@ -40,7 +69,10 @@ dependencies {
     	
     	[group: 'net.sourceforge.csvjdbc',	name: 'csvjdbc',				version:'1.0.28'],
     	
- 		[group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.0.RELEASE']
+ 		[group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.0.RELEASE'],
+ 		
+ 		[group: 'org.springframework', name: 'spring-test', version: '4.3.2.RELEASE']
+ 		
  	)
     
     

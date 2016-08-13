@@ -2,6 +2,7 @@ package ofl.sandbox.db;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,19 @@ import org.springframework.stereotype.Component;
 @Component("DatabaseManager")
 public class DatabaseManager implements DatabaseConstants {
 
-	@Autowired
+//	@Autowired
 	protected JdbcTemplate jdbcTemplate;
-
+	
+	@Autowired
+	protected DataSource dataSource;
+	
+	@PostConstruct
+	protected void postConstruct() {
+		jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	
 	public DataSource getDataSource() {
-		return jdbcTemplate.getDataSource();
+		return dataSource;
 	}
 	
 	public List<?> query(String sql, RowMapper<?> rowMapper) {
