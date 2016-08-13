@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="trace" monitorInterval="5">
+	<Appenders>
+		<Console name="consoleAppender" target="SYSTEM_OUT">
+			<PatternLayout>
+				<pattern>[%d %-5p] %m %C (%F:%L) - thread %t%n</pattern>
+			</PatternLayout>
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<Root level="INFO">
+			<AppenderRef ref="consoleAppender" />
+		</Root>
+		<Logger name="org.springframework" level="info" additivity="false">
+			<AppenderRef ref="consoleAppender" />
+		</Logger>
+		<Logger name="ofl" level="debug"  additivity="false">
+			<AppenderRef ref="consoleAppender" />
+		</Logger>
+	</Loggers>
+</configuration>

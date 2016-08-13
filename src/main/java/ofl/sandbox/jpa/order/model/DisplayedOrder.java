@@ -29,6 +29,14 @@ public class DisplayedOrder {
 		this.sourceOrderId = sourceOrderId;
 	}
 	
+	public void setDisplaySummary(String displaySummary) {
+		this.displaySummary = displaySummary;
+	}
+	
+	public String getDisplaySummary() {
+		return this.displaySummary;
+	}
+	
 	public void setOrder(Order order) {
 		this.order = order;
 	}
