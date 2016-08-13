@@ -1,4 +1,4 @@
-package ofl.sandbox.jpa.model;
+package ofl.sandbox.jpa.book.model;
 
 import javax.persistence.*;
 import java.util.Set;

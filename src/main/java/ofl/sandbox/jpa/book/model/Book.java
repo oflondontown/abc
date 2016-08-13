@@ -1,7 +1,7 @@
-package ofl.sandbox.jpa.model;
+package ofl.sandbox.jpa.book.model;
 
 import javax.persistence.*;
-
+// https://hellokoding.com/jpa-one-to-many-relationship-mapping-example-with-spring-boot-maven-and-mysql/
 @Entity
 public class Book{
     private int id;

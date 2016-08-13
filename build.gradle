@@ -23,6 +23,10 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+configurations {
+    all*.exclude module : 'spring-boot-starter-logging'
+}
+
 dependencies {
     compile(
 	
@@ -35,7 +39,11 @@ dependencies {
 		[group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.0.RELEASE'],
     	
     	
-    	[group: 'com.h2database', name: 'h2', version: '1.4.192']
+    	[group: 'com.h2database', name: 'h2', version: '1.4.192'],
+    	
+    	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2
+		[group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: '1.4.0.RELEASE']
+    	
     )
     
     
