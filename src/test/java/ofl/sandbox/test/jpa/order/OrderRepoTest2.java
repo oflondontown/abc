@@ -1,31 +1,16 @@
 package ofl.sandbox.test.jpa.order;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ofl.sandbox.jpa.order.model.DisplayedOrder;
 import ofl.sandbox.jpa.order.model.Order;
 import ofl.sandbox.jpa.order.repository.DisplayedOrderRepository;
-import ofl.sandbox.jpa.order.repository.OrderRepository;
 import ofl.sandbox.jpa.order.repository.OrderRepository2;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -62,7 +47,14 @@ public class OrderRepoTest2 {
     	String description2 = "Single Order Item Updated";
 
     	updatedOrder.setDescription(description2);
-		
+
+        try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
 		Order updatedOrder2 = orderRepository.save(updatedOrder);
 
        logger.info("Original : {}", order.toString());

@@ -45,8 +45,8 @@ public class Order extends BaseEntity {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("[").append(orderId).append("] ")
-			.append(description)
+		sb.append("[").append(orderId).append("] '")
+			.append(description).append("'. ")
 			.append(super.toString());
 		
 		return sb.toString();
