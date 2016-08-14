@@ -1,55 +1,54 @@
 package ofl.sandbox.jpa.order.model;
 
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+
 @Entity
+@Audited
+@AuditTable("SingleOrderAudit")
 @Table(name ="SingleOrder")
-public class Order {
+public class Order extends BaseEntity {
 
 	@Id
-	protected int orderId;
-
+	protected long orderId;
+	
 	protected String description;
     
-	@Column(name = "created", nullable = false)
-    private Date created;
-    
-	@Column(name = "lastUpdated", nullable = false)
-	private Date lastUpdated;
-    
+	
 	public Order() {
 	} // default constructor for jpa
+	
 
-	public Order(int orderId, String description) {
+	public Order(long orderId, String description) {
 		this.orderId = orderId;
 		this.description = description;
+		version = 1;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public int getOrderId() {
+	public long getOrderId() {
 		return orderId;
 	}
 	
-    @PreUpdate
-    public void preUpdate() {
-    	lastUpdated = new Date();
-    }
-	
-    @PrePersist
-    public void prePersist() {
-        Date now = new Date();
-        created = now;
-        lastUpdated = now;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("[").append(orderId).append("] ")
+			.append(description)
+			.append(super.toString());
+		
+		return sb.toString();
+	}
 }

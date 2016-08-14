@@ -42,7 +42,7 @@ public class OrderApp implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... strings) throws Exception {
-    	int orderId = 1;
+    	long orderId = 1;
     	String description = "Single Order Item";
     	Order Order = new Order(orderId, description);
     	
@@ -50,9 +50,6 @@ public class OrderApp implements CommandLineRunner {
     	DisplayedOrder DisplayedOrder2 = new DisplayedOrder("B",orderId);
     	
     	orderRepository.save(Order);
-    	
-//    	DisplayedOrder1.setOrder(Order);
-//    	DisplayedOrder2.setOrder(Order);
     	
     	displayedOrderRepository.save(new HashSet<DisplayedOrder>() {
 			private static final long serialVersionUID = 1L;

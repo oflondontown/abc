@@ -40,26 +40,31 @@ dependencies {
     	
 		[group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.0.RELEASE'],
     	
-    	
+    	// for in-memory / file based database
     	[group: 'com.h2database', name: 'h2', version: '1.4.192'],
     	
+    	// for auditing
+    	//[group: 'org.hibernate', name: 'hibernate-envers', version: '5.2.1.Final'],
+    	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-envers
+		
+		// Spring Data extension for envers - provides Revision lookup functionality
+		[group: 'org.springframework.data', name: 'spring-data-envers', version: '1.0.2.RELEASE'],
+    	
+    	
     	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2
-		//    [group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: '1.4.0.RELEASE']
+		[group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: '1.4.0.RELEASE']
     	
     	
     	
-		[group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'],
-		[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.6.2'],
-		[group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'],
-		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
-		[group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.6.2'],
-
-
-		[group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.6.2'],
-
+		//[group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'],
+		//[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.6.2'],
+		//[group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'],
+		//[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
+		//[group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.6.2'],
+		//[group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.6.2'],
 
 		// HIBERNATE-SPRING - LOGGER (log4j)
-		[group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21']
+		//[group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21']
 
     )
     

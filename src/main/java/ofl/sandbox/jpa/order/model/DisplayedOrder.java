@@ -13,10 +13,10 @@ public class DisplayedOrder {
 	
 	protected String displaySummary;
 
-	protected final int sourceOrderId;
+	protected final long sourceOrderId;
 	
-	@ManyToOne
-	@JoinColumn(name = "orderId")
+	@ManyToOne(optional = true)
+//	@JoinColumn(name = "orderId", nullable=true, insertable=true, updatable=true)
 	protected Order order;
 	
 
@@ -24,7 +24,7 @@ public class DisplayedOrder {
 		sourceOrderId = 0;
 	} // default constructor for jpa
 	
-	public DisplayedOrder(String displayedOrderId, int sourceOrderId) {
+	public DisplayedOrder(String displayedOrderId, long sourceOrderId) {
 		this.displayedOrderId = displayedOrderId;
 		this.sourceOrderId = sourceOrderId;
 	}
@@ -41,7 +41,7 @@ public class DisplayedOrder {
 		this.order = order;
 	}
 	
-	public int getSourceOrderId() {
+	public long getSourceOrderId() {
 		return sourceOrderId;
 	}
 	

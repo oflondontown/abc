@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import ofl.sandbox.jpa.order.model.Order;
 
-@Repository
-public interface OrderRepository extends RevisionRepository<Order, Long, Integer>, JpaRepository<Order, Long>{
+public interface OrderRepository2 extends JpaRepository<Order, Long>{
 	
 	/*
 	 * if "No property findRevisions found for type x" thrown - ensure @Configuration class is added to the ContextConfiguration with
