@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect, useLayoutEffect, useMemo } from "react";
 import "./Sidebar.css";
+import { FocusScope } from "@radix-ui/react-focus-scope";
 
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import type { AnyRoute } from "@tanstack/react-router";
+import { useSpringValue } from "@/hooks/useSpringValue";
 
 import {
   Tooltip,
@@ -12,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { handleLockScrollbar } from "../layout-ghyt/lock-scrollbar";
 import { is } from "zod/v4/locales";
+import { router } from "@/router";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Constants                                 */
@@ -103,6 +106,7 @@ export function ResponsiveSidebar({
 
   // Store refs by routeId (not by index) to avoid any ordering/key issues
   const itemRefs = useRef(new Map<string, HTMLAnchorElement>());
+  const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [indicatorY, setIndicatorY] = useState(0);
   const [indicatorH, setIndicatorH] = useState(40);
@@ -111,6 +115,13 @@ export function ResponsiveSidebar({
   const [hoverY, setHoverY] = useState(0);
   const [hoverH, setHoverH] = useState(0);
 
+  const [focusedRouteId, setFocusedRouteId] = useState<string | null>(null);
+  const [focusY, setFocusY] = useState(0);
+  const [focusH, setFocusH] = useState(0);
+
+  const animatedIndicatorY = useSpringValue(indicatorY);
+  const animatedHoverY = useSpringValue(hoverY);
+  const animatedFocusY = useSpringValue(focusY);
   /* ---------------------------- Scroll lock (mobile) ---------------------------- */
 
   useEffect(() => {
@@ -166,7 +177,7 @@ export function ResponsiveSidebar({
     setIndicatorH(elRect.height);
   }, [activeSidebarRouteId, isMobile, isOpen, sidebarRoutes]);
 
-  /* ----------------------- HOver indicator sync (pixel perfect) ----------------------- */
+  /* ----------------------- Hover indicator sync (pixel perfect) ----------------------- */
 
   useLayoutEffect(() => {
     if (isMobile) return;
@@ -182,6 +193,78 @@ export function ResponsiveSidebar({
     setHoverY(elRect.top - navRect.top + nav.scrollTop);
     setHoverH(elRect.height);
   }, [hoveredRouteId, isMobile]);
+
+  /* ---- Active focus indicator ---- */
+  useLayoutEffect(() => {
+    if (!focusedRouteId || isMobile) return;
+
+    const el = itemRefs.current.get(focusedRouteId);
+    const nav = navRef.current;
+    if (!el || !nav) return;
+
+    const elRect = el.getBoundingClientRect();
+    const navRect = nav.getBoundingClientRect();
+
+    setFocusY(elRect.top - navRect.top + nav.scrollTop);
+    setFocusH(elRect.height);
+  }, [focusedRouteId, isMobile]);
+
+  /* keyboard navigation listener */
+  useEffect(() => {
+    if (!isOpen || isMobile) return;
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) return;
+      e.preventDefault();
+
+      const routes = sidebarRoutes;
+      if (!routes.length) return;
+
+      const currentIndex = focusedRouteId
+        ? routes.findIndex((r) => r.id === focusedRouteId)
+        : routes.findIndex((r) => r.id === activeSidebarRouteId);
+
+      let nextIndex = currentIndex;
+
+      if (e.key === "ArrowDown") {
+        nextIndex = (currentIndex + 1) % routes.length;
+      } else if (e.key === "ArrowUp") {
+        nextIndex = (currentIndex - 1 + routes.length) % routes.length;
+      } else if (e.key === "Enter" && currentIndex >= 0) {
+        const route = routes[currentIndex];
+        router.navigate({ to: route.to });
+        return;
+      }
+
+      const nextRoute = routes[nextIndex];
+      setFocusedRouteId(nextRoute.id);
+
+      // Move DOM focus
+      itemRefs.current.get(nextRoute.id)?.focus();
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [
+    isOpen,
+    isMobile,
+    sidebarRoutes,
+    focusedRouteId,
+    activeSidebarRouteId,
+    router,
+  ]);
+
+  /* set initial focus on sidebar open */
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Focus the active or first sidebar item
+    const target =
+      (activeSidebarRouteId && itemRefs.current.get(activeSidebarRouteId)) ||
+      itemRefs.current.values().next().value;
+
+    target?.focus();
+  }, [isOpen, activeSidebarRouteId]);
 
   /* --------------------------- Layout math ----------------------------- */
 
@@ -207,98 +290,126 @@ export function ResponsiveSidebar({
       )}
 
       {/* Sidebar */}
-      <aside
-        className="
+      <FocusScope
+        trapped={isOpen}
+        onUnmountAutoFocus={(event) => {
+          // Prevent Radix from guessing
+          event.preventDefault();
+          toggleButtonRef.current?.focus();
+        }}
+      >
+        <aside
+          className="
           fixed top-0 left-0 h-full z-[100]
           bg-gray-900 text-white
           flex flex-col overflow-x-hidden
           transition-[width,transform]
           duration-300 ease-[cubic-bezier(0.2,0,0,1)]
         "
-        style={{ width, transform }}
-      >
-        {/* Header */}
-        <div className="relative h-16 flex items-center border-b border-gray-700 flex-shrink-0">
-          {/* Desktop toggle (mobile toggle should be in AppHeader) */}
-          {!isMobile && (
-            <button
-              className="absolute left-2 top-1/2 -translate-y-1/2
-                         bg-gray-800 text-white p-2 rounded z-[110]"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle sidebar"
-            >
-              ☰
-            </button>
-          )}
-
-          <span
-            className="ml-12 font-bold text-lg whitespace-nowrap
-                       transition-all duration-300 ease-out"
-            style={{
-              opacity: isOpen || isMobile ? 1 : 0,
-              transform:
-                isOpen || isMobile ? "translateX(0)" : "translateX(-12px)",
-            }}
-          >
-            MyApp
-          </span>
-        </div>
-
-        {/* Menu */}
-        <nav
-          ref={(el) => (navRef.current = el)}
-          className="relative flex-1 overflow-y-auto sidebar-scroll"
+          style={{ width, transform }}
         >
-          {/* Hover indicator */}
-          {!isMobile && hoveredRouteId && (
-            <div
-              className="absolute left-0 w-0.5 rounded bg-red-700 
-                transition-transform duration-150 ease-out pointer-events-none 
+          {/* Header */}
+          <div className="relative h-16 flex items-center border-b border-gray-700 flex-shrink-0">
+            {/* Desktop toggle (mobile toggle should be in AppHeader) */}
+            {!isMobile && (
+              <button
+                ref={toggleButtonRef}
+                className="absolute left-2 top-1/2 -translate-y-1/2
+                         bg-gray-800 text-white p-2 rounded z-[110]"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle sidebar"
+              >
+                ☰
+              </button>
+            )}
+
+            <span
+              className="ml-12 font-bold text-lg whitespace-nowrap
+                       transition-all duration-300 ease-out"
+              style={{
+                opacity: isOpen || isMobile ? 1 : 0,
+                transform:
+                  isOpen || isMobile ? "translateX(0)" : "translateX(-12px)",
+              }}
+            >
+              MyApp
+            </span>
+          </div>
+
+          {/* Menu */}
+          <nav
+            ref={(el) => (navRef.current = el)}
+            className="relative flex-1 overflow-y-auto sidebar-scroll"
+          >
+            {/* Hover indicator */}
+            {!isMobile && hoveredRouteId && (
+              <div
+                className="absolute left-0 w-0.5 rounded bg-red-700 
+                pointer-events-none 
                 z-20 will-change-transform"
-              style={{
-                transform: `translateY(${hoverY}px)`,
-                height: hoverH,
-              }}
-            />
-          )}
-
-          {/* Active indicator (desktop only) */}
-          {!isMobile && (
-            <div
-              className="absolute left-0 w-0.5 bg-blue-500 rounded
-                         transition-transform duration-200 ease-out"
-              style={{
-                transform: `translateY(${indicatorY}px)`,
-                height: indicatorH,
-              }}
-            />
-          )}
-
-          {sidebarRoutes.map((item) => {
-            const isActive = item.id === activeSidebarRouteId;
-
-            return (
-              <SidebarLink
-                key={item.id}
-                routeId={item.id}
-                to={item.to}
-                icon={item.icon}
-                label={item.label}
-                isOpen={isOpen || isMobile}
-                showTooltip={!isMobile && !isOpen}
-                active={isActive}
-                onNavigate={() => {
-                  if (isMobile) setIsOpen(false);
-                }}
-                onHover={(id) => setHoveredRouteId(id)}
-                registerRef={(routeId, el) => {
-                  if (el) itemRefs.current.set(routeId, el);
+                style={{
+                  transform: `translateY(${animatedHoverY}px)`,
+                  height: hoverH,
                 }}
               />
-            );
-          })}
-        </nav>
-      </aside>
+            )}
+
+            {/* Focus indicator (keyboard) */}
+            {!isMobile && focusedRouteId && (
+              <div
+                className="
+      absolute left-0 w-[2px] rounded
+      bg-yellow-400/70
+      
+      pointer-events-none
+      z-30
+      will-change-transform
+    "
+                style={{
+                  transform: `translateY(${animatedFocusY}px)`,
+                  height: focusH,
+                }}
+              />
+            )}
+
+            {/* Active indicator (desktop only) */}
+            {!isMobile && (
+              <div
+                className="absolute left-0 w-0.5 bg-blue-500 rounded"
+                style={{
+                  transform: `translateY(${animatedIndicatorY}px)`,
+                  height: indicatorH,
+                }}
+              />
+            )}
+
+            {sidebarRoutes.map((item) => {
+              const isActive = item.id === activeSidebarRouteId;
+
+              return (
+                <SidebarLink
+                  key={item.id}
+                  routeId={item.id}
+                  to={item.to}
+                  icon={item.icon}
+                  label={item.label}
+                  isOpen={isOpen || isMobile}
+                  showTooltip={!isMobile && !isOpen}
+                  active={isActive}
+                  onNavigate={() => {
+                    if (isMobile) setIsOpen(false);
+                  }}
+                  onHover={(id) => setHoveredRouteId(id)}
+                  registerRef={(routeId, el) => {
+                    if (el) itemRefs.current.set(routeId, el);
+                  }}
+                  onFocusRoute={setFocusedRouteId}
+                />
+              );
+            })}
+          </nav>
+        </aside>
+      </FocusScope>
     </TooltipProvider>
   );
 }
@@ -318,6 +429,7 @@ interface SidebarLinkProps {
   onNavigate: () => void;
   onHover: (routeId: string | null) => void;
   registerRef: (routeId: string, el: HTMLAnchorElement | null) => void;
+  onFocusRoute: (routeId: string | null) => void;
 }
 
 function SidebarLink({
@@ -331,16 +443,21 @@ function SidebarLink({
   onNavigate,
   onHover,
   registerRef,
+  onFocusRoute,
 }: SidebarLinkProps) {
   return (
     <Link
       to={to}
       onMouseEnter={() => onHover(routeId)}
       onMouseLeave={() => onHover(null)}
+      tabIndex={-1}
+      onFocus={() => onFocusRoute(routeId)}
+      onBlur={() => onFocusRoute(null)}
       onClick={onNavigate}
       ref={(el) => registerRef(routeId, el)}
       className={`relative flex items-center h-10 w-full rounded
                   px-2 text-left transition-colors
+                   outline-none focus-visible:outline-none
                   ${active ? "bg-gray-800/60" : "hover:bg-gray-800"}`}
     >
       <TooltipWrapper label={label} enabled={showTooltip}>
