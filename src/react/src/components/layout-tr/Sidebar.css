@@ -1,0 +1,42 @@
+/* Base: keep vertical scrolling enabled always */
+.sidebar-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Expanded (styled + thin) */
+.sidebar-scroll[data-state="open"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll[data-state="open"]::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+.sidebar-scroll[data-state="open"]::-webkit-scrollbar-thumb {
+  background-color: #475569;
+  border-radius: 4px;
+}
+
+.sidebar-scroll[data-state="open"] {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #475569 #0f172a; /* Firefox */
+}
+
+/* Collapsed: still scrollable, but NO visible scrollbar and NO reserved width */
+.sidebar-scroll[data-state="collapsed"]::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.sidebar-scroll[data-state="collapsed"]::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+.sidebar-scroll[data-state="collapsed"]::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.sidebar-scroll[data-state="collapsed"] {
+  scrollbar-width: none; /* Firefox: hides scrollbar but keeps scrolling */
+}
